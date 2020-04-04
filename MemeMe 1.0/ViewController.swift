@@ -24,22 +24,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let memeTextAttributes: [NSAttributedString.Key: Any] = [
+        setupTextField(textField: topText, text: "TOP")
+        setupTextField(textField: bottomText, text: "BOTTOM")
+    }
+    
+    func setupTextField(textField: UITextField, text: String) {
+        textField.defaultTextAttributes = [
             NSAttributedString.Key.strokeColor:  UIColor.black,
             NSAttributedString.Key.foregroundColor: UIColor.white,
             NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSAttributedString.Key.strokeWidth:  6.0
+            NSAttributedString.Key.strokeWidth:  -4.0
         ]
-        topText.defaultTextAttributes = memeTextAttributes
-        bottomText.defaultTextAttributes = memeTextAttributes
-        topText.text = "Top"
-        bottomText.text = "Bottom"
-        topText.textAlignment = NSTextAlignment.center
-        bottomText.textAlignment = NSTextAlignment.center
-        bottomText.delegate = self
-        topText.delegate = self
-        
+            
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.textAlignment = .center
+        textField.text = text
+        textField.delegate = self
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
@@ -54,21 +57,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
-
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        present(imagePicker, animated: true, completion: nil)
+        chooseImageFromCameraOrPhoto(source: .camera)
     }
     
     @IBAction func pickAnImageFromAlbum(_ sender: Any) {
-        
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        chooseImageFromCameraOrPhoto(source: .photoLibrary)
     }
     
+    func chooseImageFromCameraOrPhoto(source: UIImagePickerController.SourceType) {
+        let pickerController = UIImagePickerController()
+        pickerController.delegate = self
+        pickerController.allowsEditing = true
+        pickerController.sourceType = source
+        present(pickerController, animated: true, completion: nil)
+    }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
@@ -154,14 +156,5 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
         return memedImage
     }
-    
-    struct Meme {
-        let topText:String;
-        let bottomText:String;
-        let originalImage: UIImage;
-        let memedImage: UIImage;
-    }
-    
-    
 }
 
